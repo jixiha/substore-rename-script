@@ -1,5 +1,5 @@
 /**
-* Sub-Store 节点重命名脚本 v3 — 统一命名格式版
+* Sub-Store 节点重命名脚本 v4 — 统一命名格式版
 * 综合参考：Keywos rename.js + cwbitz/substore-rename-script (201 国，MIT)
 *
 * 统一格式（默认）：
@@ -110,6 +110,7 @@ function operator(proxies) {
 let list = proxies;
 if (filterInvalid) list = list.filter(p =>!INVALID_RE.test(String(p.name || '')));
 
+const seen = {};
 return list.map(p => {
 let n = String(p.name || '');
 
@@ -155,12 +156,14 @@ const label = countryLabel(country);
 restParts.push(addFlagLabel ? country.flag + ' ' + label : label);
 } else {
 if (rest) restParts.push(rest);
-p.name = providerLabel ? providerLabel + sepFinal + restParts.join(' ') : restParts.join(' ');
+let baseName = providerLabel ? providerLabel + sepFinal + restParts.join(' ') : restParts.join(' ');
+if (seen[baseName]) { seen[baseName]++; p.name = baseName + '-' + seen[baseName]; } else { seen[baseName] = 1; p.name = baseName; }
 return p;
 }
 if (index) restParts.push(index);
 if (suffix) restParts.push(suffix);
-p.name = providerLabel ? providerLabel + sepFinal + restParts.join(' ') : restParts.join(' ');
+let baseName = providerLabel ? providerLabel + sepFinal + restParts.join(' ') : restParts.join(' ');
+if (seen[baseName]) { seen[baseName]++; p.name = baseName + '-' + seen[baseName]; } else { seen[baseName] = 1; p.name = baseName; }
 return p;
 });
 }
