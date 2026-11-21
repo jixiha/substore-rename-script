@@ -41,7 +41,7 @@ try { return decodeURIComponent(v);} catch (e) { try { return decodeURI(v);} cat
 }
 const providerLabel = decode(inArg.providerLabel, '') || decode(inArg.name, '') || '模版';
 const providerLabelSep = decode(inArg.providerLabelSep, ' | ');
-const filterInvalid = boolArg(inArg.filterInvalid, false);
+const filterInvalid = boolArg(inArg.filterInvalid, true);
 
 const INVALID_RE = /(?:套餐|到期|过期|已用|剩余|有效|版本|失联|官网|官方|网址|网站|官址|备用|群|客服|获取|订阅|流量|下次|联系|邮箱|工单|拉取|距离下次重置|plan|expire|used|total|left|valid|official|website|backup|group|support|subscription|traffic|next|contact|email|ticket)/i;
 
@@ -60,7 +60,8 @@ const prefix = cleanLabel ? cleanLabel + sepFinal : '';
 // 同一个名字第二次出现自动加 -2，第三个加 -3
 const seen = {};
 return list.map(p => {
-const baseName = prefix + String(p.name || '');
+const cleanName = String(p.name || '').replace(/(?:\uD83C[\uDDE6-\uDDFF]){2}\s?/g, '').trim();
+const baseName = prefix + cleanName;
 if (seen[baseName]) {
 seen[baseName]++;
 p.name = baseName + '-' + seen[baseName];
